@@ -35,10 +35,8 @@ class CalendarFragment : Fragment() {
     private var selectedDate: LocalDate? = null
     private val today = LocalDate.now()
     private val monthTitleFormatter = DateTimeFormatter.ofPattern("MMMM")
-
-    private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM")
-    private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy")
     private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,6 +61,7 @@ class CalendarFragment : Fragment() {
         val lastMonth = currentMonth.plusMonths(10)
         val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
         val daysOfWeek = daysOfWeekFromLocale()
+
 
 
         binding.calendarView.apply {
@@ -99,8 +98,8 @@ class CalendarFragment : Fragment() {
             // Called every time we need to reuse a container.
             override fun bind(container: DayViewContainer, day: CalendarDay) {
                 container.day = day
-                val textView = container.binding.exThreeDayText
-                val dotView = container.binding.exThreeDotView
+                val textView = container.binding.dayText
+                val dotView = container.binding.dotView
                 textView.text = day.date.dayOfMonth.toString()
                 textView.text = day.date.dayOfMonth.toString()
 
@@ -132,19 +131,19 @@ class CalendarFragment : Fragment() {
         binding.calendarView.monthScrollListener = {
 
             val title = "${monthTitleFormatter.format(it.yearMonth)} ${it.yearMonth.year}"
-            binding.exFiveMonthYearText.text = title
+            binding.monthYearText.text = title
             // Select the first day of the month when
             // we scroll to a new month.
             selectDate(it.yearMonth.atDay(1))
         }
 
-        binding.exFiveNextMonthImage.setOnClickListener {
+        binding.nextMonthImage.setOnClickListener {
             binding.calendarView.findFirstVisibleMonth()?.let {
                 binding.calendarView.smoothScrollToMonth(it.yearMonth.next)
             }
         }
 
-        binding.exFivePreviousMonthImage.setOnClickListener {
+        binding.previousMonthImage.setOnClickListener {
             binding.calendarView.findFirstVisibleMonth()?.let {
                 binding.calendarView.smoothScrollToMonth(it.yearMonth.previous)
             }
@@ -162,7 +161,6 @@ class CalendarFragment : Fragment() {
                     container.legendLayout.tag = month.yearMonth
                     container.legendLayout.children.map { it as TextView }.forEachIndexed { index, tv ->
                         tv.text = daysOfWeek[index].name.first().toString()
-                        tv.setTextColorRes(androidx.appcompat.R.color.material_blue_grey_800)
                     }
                 }
             }
@@ -180,6 +178,11 @@ class CalendarFragment : Fragment() {
             selectedDate = date
             oldDate?.let { binding.calendarView.notifyDateChanged(it) }
             binding.calendarView.notifyDateChanged(date)
+            updateAdapterForDate(date)
         }
+    }
+
+    private fun updateAdapterForDate(date: LocalDate) {
+        binding.selectedDateText.text = selectionFormatter.format(date)
     }
 }

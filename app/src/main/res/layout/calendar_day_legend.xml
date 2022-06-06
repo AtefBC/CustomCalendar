@@ -14,7 +14,8 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="SUN"
-        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textColor="#FF0000"
         android:textSize="14sp" />
 
     <TextView
